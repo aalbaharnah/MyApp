@@ -32,13 +32,13 @@ class Header extends React.Component {
     }
 
     render() {
-         // checks if this.props.cityName exist in the array this.props.Cities 
+        // checks if this.props.cityName exist in the array this.props.Cities 
         const isCityExist = this.props.Cities.some(city => city === this.props.cityName);
 
         return (
-            <View style={{ marginHorizontal: 40, flexDirection: "row" }}>
+            <View style={styles.container}>
 
-                <View style={{ flex: 1, flexDirection: "row", alignItems: "center" }}>
+                <View style={{ flex: 1, flexDirection: "row", alignItems: "center", marginHorizontal:20 }}>
                     <Icon.Feather name={"search"} size={22} color={this.state.focus ? "#000" : "#b3b3b3"} />
                     <View style={{ marginHorizontal: 10 }}>
                         <TextInput
@@ -53,7 +53,7 @@ class Header extends React.Component {
                 </View>
 
                 <TouchableOpacity
-                    onPress={() => this.onLikePress()} 
+                    onPress={() => this.onLikePress()}
                 >
                     {/* if city exist show colored button else show empty one */}
                     {isCityExist ? (
@@ -84,3 +84,16 @@ const MapStateToProps = state => ({
 
 // connecting the list of reducers with the current compoenent
 export default connect(MapStateToProps)(Header)
+
+
+const styles = StyleSheet.create({
+    container: {
+
+        marginVertical: 5,
+        marginHorizontal:20,
+        flexDirection: "row",
+        alignItems:"center",
+        height: 55
+    }
+
+})

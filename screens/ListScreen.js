@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Platform, TouchableOpacity, FlatList } from "re
 import Constants from "expo-constants";
 import * as Icon from "@expo/vector-icons";
 import { connect } from "react-redux";
+import City from "../components/City"
 
 class ListScreen extends Component {
 
@@ -16,12 +17,11 @@ class ListScreen extends Component {
     render() {
         return (
             <View style={styles.container}>
-                {Platform.OS === "ios" && (
-                    <View style={{ height: Constants.statusBarHeight, }} />
-                )}
+
+                <View style={{ height: Constants.statusBarHeight, }} />
 
                 {/* Customizable icon to press on to navigate to pervious screen */}
-                <TouchableOpacity style={{ marginLeft: 10 }}
+                <TouchableOpacity style={{ marginLeft: 20, height: 55, justifyContent: "center" }}
                     onPress={() => this.props.navigation.goBack()}
                 >
                     <Icon.AntDesign name={"arrowleft"} size={22} color={"#000"} />
@@ -35,17 +35,7 @@ class ListScreen extends Component {
                 <FlatList
                     data={this.props.Cities}
                     keyExtractor={(item, index) => `${item}_${index}`}
-                    renderItem={({ item }) => {
-                        return (
-                            <TouchableOpacity
-                                onPress={() => this.onPress(item)}
-                                style={{ marginHorizontal: 20, borderBottomWidth: 1, paddingVertical: 5, borderBottomColor: "#b3b3b3" }}
-                            >
-                                <Text>{item}</Text>
-                            </TouchableOpacity>
-
-                        )
-                    }}
+                    renderItem={({ item }) => <City cityName={item} onPress={() => this.onPress(item)} />}
                 />
             </View>
         )

@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, ActivityIndicator, Platform, TouchableOpacity }
 import * as Location from "expo-location";
 import * as Permissions from "expo-permissions";
 import Constants from "expo-constants";
-import { myKey } from "../MyKey/mykey"
+import { gets } from "../js"
 
 import * as Icon from "@expo/vector-icons";
 
@@ -46,36 +46,22 @@ export default class MainScreen extends React.Component {
 
     // Gets weather info by coords
     async getWeatherByCoords(lat, lng) {
-        const key = myKey
-        if(!key){
-            alert("where is your key اخوك");
-            return;
-        }
-        return fetch(
-            `http://api.weatherstack.com/current?access_key=${key}&query=${lat},${lng}`
-        ).then(response => response.json()).then(data => {
+        gets.WeatherInfo(`${lat},${lng}`).then(data => {
             this.setState({
                 city: data, // save weather response data in state
-                isLoaded: true, // flag isLoaded is true
+                isLoaded: true // flag isLoaded is true
             })
         })
     }
 
     // Gets weather info by city name
     async getWeatherBySearch(city_name) {
-        const key = myKey
-        if(!key){
-            alert("where is your key اخوك");
-            return;
-        }
         this.setState({ isLoaded: false })
-        return fetch(
-            `http://api.weatherstack.com/current?access_key=${key}&query=${city_name}`
-        ).then(response => response.json()).then(data => {
+        gets.WeatherInfo(city_name).then(data => {
             this.setState({
-                city: data, // save weather response data in state
-                isLoaded: true, // flag isLoaded is true
-                text: "" // reset text
+                city: data,
+                isLoaded: true,
+                text: "", // reset text
             })
         })
     }
@@ -89,10 +75,10 @@ export default class MainScreen extends React.Component {
     render() {
         return (
             <View style={styles.container}>
-                {/* view with the hight status bar height only and only if OS is ios */}
-                {Platform.OS === "ios" && (
-                    <View style={{ height: Constants.statusBarHeight, }} />
-                )}
+                {/* view with the hight status bar height */}
+
+                <View style={{ height: Constants.statusBarHeight, }} />
+
 
                 {/* text input search, like button and navigation arrow */}
                 <Header
@@ -108,47 +94,58 @@ export default class MainScreen extends React.Component {
                 {/* if is loaded is true show the full view else show activity indicatior */}
                 {this.state.isLoaded ? (
                     <View style={{ flex: 1 }}>
-                        <View style={{ flex: 1, margin: 40 }}>
+                        <View style={styles.section}>
 
                             {/* if city.location is not null show city name */}
-                            {this.state.city.location != null && (
-                                <Text style={{ fontSize: 22 }}>{this.state.city.location.name}</Text>
-                            )}
+                            <View style={{ flex: 1 }}>
+                                {this.state.city.location != null && (
+                                    <View>
+                                        <Text style={{ fontSize: 28, fontWeight: "700" }}>{this.state.city.location.name}</Text>
+                                        <Text style={{ fontSize: 16, color: "#b3b3b3" }}>{this.state.city.location.region}</Text>
+                                    </View>
+                                )}
+                            </View>
+                            <View style={{ flex: 1 }} />
                         </View>
 
-                        <View style={{ flex: 2, justifyContent: "center", marginHorizontal: 40 }}>
-                            <Text style={{ fontSize: 62, fontWeight: "bold" }}>{this.state.city.current.temperature}°</Text>
-                            {/* list of all desciptions comming from api */}
-                            {this.state.city.current.weather_descriptions.map((description, index) => {
-                                return (
-                                    <Text
-                                        key={`description_${index}`}
-                                        style={{ color: "#b3b3b3" }}
-                                    >{description}</Text>
-                                )
-                            })}
+                        <View style={styles.section}>
+                            <View style={{ flex: 1 }}>
+                                <View>
+                                    <Text style={{ fontSize: 82, fontWeight: "bold" }}>{this.state.city.current.temperature}°</Text>
+                                    {/* list of all desciptions comming from api */}
+                                    {this.state.city.current.weather_descriptions.map((description, index) => {
+                                        return (
+                                            <Text
+                                                key={`description_${index}`}
+                                                style={{ color: "#b3b3b3", fontSize: 18, }}
+                                            >{description}</Text>
+                                        )
+                                    })}
+                                </View>
+                            </View>
+                            <View style={{ flex: 1 }} />
                         </View>
 
                         {/* bottom weather info */}
-                        <View style={{ flex: 1, flexDirection: "row", justifyContent: "space-between", marginHorizontal: 20 }}>
-                            <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-                                <Icon.Feather name={"wind"} size={18} color={"#000"} />
-                                <Text>{this.state.city.current.wind_speed}</Text>
+                        <View style={styles.bottom_container}>
+                            <View style={styles.flex_center}>
+                                <Icon.Feather name={"wind"} size={24} color={"#000"} />
+                                <Text style={{ color: "#b3b3b3" }}>{this.state.city.current.wind_speed} mph</Text>
                             </View>
-                            <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-                                <Icon.Feather name={"eye"} size={18} color={"#000"} />
-                                <Text>{this.state.city.current.visibility}</Text>
+                            <View style={styles.flex_center}>
+                                <Icon.Feather name={"eye"} size={24} color={"#000"} />
+                                <Text style={{ color: "#b3b3b3" }}>{this.state.city.current.visibility}</Text>
                             </View>
-                            <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-                                <Icon.Feather name={"droplet"} size={18} color={"#000"} />
-                                <Text>{this.state.city.current.humidity}</Text>
+                            <View style={styles.flex_center}>
+                                <Icon.Feather name={"droplet"} size={24} color={"#000"} />
+                                <Text style={{ color: "#b3b3b3" }}>{this.state.city.current.humidity}%</Text>
                             </View>
                         </View>
 
                     </View>
 
                 ) : (
-                        <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+                        <View style={styles.flex_center}>
                             <ActivityIndicator />
                         </View>
                     )
@@ -168,5 +165,21 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: "#fff"
+    },
+    section: {
+        flex: 1,
+        marginHorizontal: 40,
+        flexDirection: "row"
+    },
+    bottom_container: {
+        flex: 1,
+        flexDirection: "row",
+        justifyContent: "space-between",
+        marginHorizontal: 20
+    },
+    flex_center: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center"
     }
 })
