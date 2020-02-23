@@ -98,11 +98,14 @@ const Header = (props) => {
     const [foucs, setFoucs] = useState(false);
     const [background, setBackground] = useState("#fff")
 
+    // RUNS ONCE VIEW IS RENDER OR THERE IS A CHANGE IN THE GIVEN VARIABLES
     useEffect(() => {
-        // RUN ONCE VIEW IS RENDER
-        const color = background === "#fff" ? "#b3b3b3" :  "#fff"
+        const color = background === "#fff" ? "#b3b3b3" : "#fff"
         setBackground(color)
-    },[Cities])
+    }, [
+        // add variables here
+        Cities,
+    ])
 
     function onLikePress() {
         // checks if this.props.cityName exist in the array this.props.Cities 
